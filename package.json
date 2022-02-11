@@ -1,6 +1,6 @@
 {
   "name": "sudoku-uniapp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "sudoku-react": "^0.2.0"
+    "sudoku-react": "^0.2.1",
+    "vue-confetti": "^2.2.2"
   }
 }
