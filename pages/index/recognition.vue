@@ -41,7 +41,7 @@
             if (res.success) {
               const gridData = JSON.stringify(res.data)
               uni.navigateTo({
-                url: `grid?gridData=${gridData}`
+                url: `grid?amendable=1&gridData=${gridData}`
               })
             } else {
               uni.showModal({

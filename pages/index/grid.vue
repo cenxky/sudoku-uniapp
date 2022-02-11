@@ -17,7 +17,7 @@
             'filled-error': !value && invalidRecords[[x, y].join()],
           }">
           <view class="cell" @tap="markCellEditing(x, y)">
-            <view v-if="showTips && !value" class="tips">
+            <view v-if="showTips && !value && !invalidRecords[[x, y].join()]" class="tips">
               <view v-for="(groupedNumbers, idx) in numbersForTips" :key="idx" class="tips-row">
                 <text v-for="num in groupedNumbers" :key="num" class="tips-item">
                   {{ sudoku.allowedNumbers(x, y).indexOf(num) >= 0 ? num : "" }}
@@ -36,7 +36,7 @@
         <text class="iconfont icon-sudoku"></text>
         <text>{{ !baseNumbers.length ? "生成数独" : "重新生成" }}</text>
       </view>
-      <view hover-class="bg-grey" class="sudoku-actions-item" @tap="canClean && fillValue(0)"
+      <view :hover-class="canClean ? 'bg-grey' : 'none'" class="sudoku-actions-item" @tap="canClean && fillValue(0)"
         :class="{ disabled: !canClean }">
         <text class="iconfont icon-eraser"></text>
         <text>清除</text>
@@ -51,7 +51,7 @@
       </view>
     </view>
     <view class="sudoku-numbers">
-      <text v-for="num in numbers" @tap="fillValue(num)" :key="num">
+      <text v-for="num in numbers" @tap="fillValue(num)" :key="num" :class="{ disabled: !canFill }">
         {{ num }}
       </text>
     </view>
@@ -79,6 +79,7 @@
         isSudokuSolved: false,
         invalidRecords: {},
         playCongsAnimation: false,
+        amendable: false,
       }
     },
     onLoad(option) {
@@ -104,6 +105,7 @@
       })
       this.mode = this.sudoku.mode
       this.gridData = this.sudoku.grid
+      this.amendable = Boolean(option.amendable)
     },
     computed: {
       numbers() {
@@ -123,6 +125,9 @@
           this.editingCell.length &&
           this.gridData[y][x] || this.invalidRecords[[x, y].join()]
         )
+      },
+      canFill() {
+        return this.amendable || this.isFilledValue(...this.editingCell)
       },
       currentFilledCoordinates() {
         return this.gridData.reduce((cells, row, y) => {
@@ -157,6 +162,10 @@
       },
       fillValue(num) {
         const [x, y] = this.editingCell
+        
+        if (!this.canFill) {
+          return false
+        }
 
         // Fill num to cell and save to invalid records if raised error
         try {
