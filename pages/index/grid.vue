@@ -55,11 +55,13 @@
         {{ num }}
       </text>
     </view>
+    <fireworks v-if="playCongsAnimation" />
   </view>
 </template>
 
 <script>
   import Sudoku from "sudoku-react"
+  import fireworks from '@/components/sanshui-fireworks/sanshui-fireworks.vue'
   import {
     arrayChunk
   } from "@/utils"
@@ -76,6 +78,7 @@
         showTips: false,
         isSudokuSolved: false,
         invalidRecords: {},
+        playCongsAnimation: false,
       }
     },
     onLoad(option) {
@@ -239,24 +242,26 @@
           return
         }
 
-        // Play animation
-        this.$confetti.start({
-            defaultSize: 5
-          }),
+        this.playCongsAnimation = true
 
-          // Load congratulation modal
+        // Load congratulation modal
+        setTimeout(() => {
           uni.showModal({
             title: "恭喜",
             content: "太赞了！此数独被您成功破解！",
             showCancel: false,
             mask: false,
             success: (res) => {
-              this.$confetti.stop()
+              this.playCongsAnimation = false
               this.isSudokuSolved = true
             }
           })
+        }, 1000)
       }
     },
+    components: {
+      fireworks
+    }
   }
 </script>
 
